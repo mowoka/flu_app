@@ -1,3 +1,5 @@
+import 'package:flu_app/features/home/data/repository/home_repository_impl.dart';
+import 'package:flu_app/features/home/presentation/provider/home_provider.dart';
 import 'package:flu_app/features/home/presentation/routes/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,6 +22,7 @@ class FluApp extends StatefulWidget {
 
 class _FluAppState extends State<FluApp> {
   late final GoRouter _router;
+  late final HomeProvider _homeProvider;
 
   @override
   void initState() {
@@ -28,14 +31,25 @@ class _FluAppState extends State<FluApp> {
     initDependencies();
   }
 
+  Future<String> getAccessToken() async {
+    return '';
+  }
+
   initDependencies() {
     _router = initRouter();
+    // register repository and provider
+    final homeRepo = HomeRepositoryImpl(accessTokenGetter: getAccessToken);
+    _homeProvider = HomeProvider(repository: homeRepo);
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: const [],
+      providers: [
+        ChangeNotifierProvider<HomeProvider>(
+          create: (context) => _homeProvider,
+        ),
+      ],
       child: MaterialApp.router(
         title: "Flutter App",
         theme: ThemeData(
